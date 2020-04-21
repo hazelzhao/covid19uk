@@ -1,4 +1,6 @@
 
+
+
 # covid19uk
 
 Some basic analysis to go with the eAtlas covid19UK application.
@@ -76,14 +78,51 @@ And we can see a line chart of, say Leeds:
 
 ``` r
 library(ggplot2)
-leeds = utlas$ctyua19cd[utlas$ctyua19nm == "Leeds"]
-leeds = json$utlas[[leeds]]
-cc = leeds$dailyConfirmedCases
-cc = data.frame(matrix(unlist(cc), nrow=length(cc), byrow=T))
-names(cc) = c("date", "cases")
-cc$date = as.POSIXct(as.character(cc$date))
-cc$cases = as.numeric(cc$cases)
-ggplot(cc, aes(date,cases)) + geom_bar(stat="identity")
+cityWithDaily = function(name = "Leeds", total = FALSE) {
+  la = utlas$ctyua19cd[utlas$ctyua19nm == name]
+  la = json$utlas[[la]]
+  cc = as.data.frame(la$dailyConfirmedCases)
+  if(total) {
+      cc = la$dailyTotalConfirmedCases
+  }
+  # cc = data.frame(matrix(unlist(cc), nrow=length(cc), byrow=T))
+  names(cc) = c("date", "cases")
+  cc$date = as.POSIXct(as.character(cc$date))
+  cc$cases = as.numeric(as.character(cc$cases))
+  cc
+}
+# cityWithDaily() %>% ggplot(aes(date,cases)) + geom_bar(stat="identity")
+cityWithDaily(total = T) %>% ggplot(aes(date,cases)) + geom_line()
+cityWithDaily() %>% ggplot(aes(date,cases)) + geom_line()
 ```
+
+<img src="README_files/figure-gfm/leeds-1.png" width="50%" /><img src="README_files/figure-gfm/leeds-2.png" width="50%" />
+Total cases for Leeds on the left and daily ones on the right.
+
+Lets get some population data:
+
+``` r
+pop = readxl::read_xls("~/Downloads/ukmidyearestimates20182019ladcodes.xls", sheet = 6)
+names(pop) = pop[4,]
+pop = pop[5:nrow(pop),]
+pop = pop[!is.na(pop$`All ages`), ]
+# are they in here?
+m = match(utlasWithCases$ctyua19cd, pop$Code)
+# length m = nrow(utlasWithCases) == 173
+pop$`All ages` = as.numeric(pop$`All ages`)
+# pop[pop$Name == "Leeds","All ages"]
+boxplot(pop[pop$Geography1 == "Unitary Authority", "All ages"])
+```
+
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
+Now we can calculate the infection rate of (1/100K) for each of them
+
+``` r
+utlasWithCases = addCasesToUTLAs(utlas, json)
+utlasWithCases$population = pop[m,][["All ages"]]
+utlasWithCases$ir = utlasWithCases$totalCases/(utlasWithCases$population/1e5)
+plot(utlasWithCases[,"ir"], main = paste0("Infection rate per 100k on ", Sys.Date()))
+```
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
