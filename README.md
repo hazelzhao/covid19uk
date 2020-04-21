@@ -102,7 +102,10 @@ Total cases for Leeds on the left and daily ones on the right.
 Lets get some population data:
 
 ``` r
-pop = readxl::read_xls("~/Downloads/ukmidyearestimates20182019ladcodes.xls", sheet = 6)
+popFile = file.path(tempdir(), "ukmidyearestimates20182019ladcodes.xls")
+url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fpopulationandmigration%2fpopulationestimates%2fdatasets%2fpopulationestimatesforukenglandandwalesscotlandandnorthernireland%2fmid20182019laboundaries/ukmidyearestimates20182019ladcodes.xls"
+download.file(url, destfile = popFile)
+pop = readxl::read_xls(popFile, sheet = 6)
 names(pop) = pop[4,]
 pop = pop[5:nrow(pop),]
 pop = pop[!is.na(pop$`All ages`), ]
