@@ -1,80 +1,56 @@
+---
+output: github_document
+---
 
 # covid19uk
 
 Some basic analysis to go with the eAtlas covid19UK application.
 
-Currently the date released by PHE in their dashboard can be found under
-their React app which is made of two API endpoints. These are:
+Currently the date released by PHE in their dashboard can be found under their React app which is made of two API endpoints. These are:
 
-  - [XML](https://publicdashacc.blob.core.windows.net/publicdata?restype=container&comp=list)
-    of data released.
-  - [actual](https://c19pub.azureedge.net/) endpoint to the data.
+* [XML](https://publicdashacc.blob.core.windows.net/publicdata?restype=container&comp=list) of data released.
+* [actual](https://c19pub.azureedge.net/) endpoint to the data.
 
 Understanding the structure of the data released:
-
-``` r
+```{r, results='hide', message=FALSE, warning=FALSE}
 # see phe.R for details of the code.
 source("phe.R")
 ```
-
-``` r
+```{r}
 # data from phe is
 names(json)
-```
-
-    ## [1] "lastUpdatedAt" "disclaimer"    "overview"      "countries"    
-    ## [5] "regions"       "utlas"
-
-``` r
 # so last released data is
 json$lastUpdatedAt
 ```
 
-    ## [1] "2020-04-20T15:59:38.910841Z"
 
-Nicely, they also release geometries and we can generate maps. For
-example to get thee latest figures of the regions:
-
-``` r
+Nicely, they also release geometries and we can generate maps. For example to get thee latest figures of the regions:
+```{r}
 utlasWithCases = addCasesToUTLAs(utlas, json)
 plot(utlasWithCases[,"totalCases"])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+A simple function in the `phe.R` file can also take a specific date, the data starts from `31st of Jan`. So lets use the lockdown date of `2020-3-23` and seee what the UK looked liek back then:
 
-A simple function in the `phe.R` file can also take a specific date, the
-data starts from `31st of Jan`. So lets use the lockdown date of
-`2020-3-23` and seee what the UK looked liek back then:
-
-``` r
+```{r}
 date = "2020-03-20"
 utlasWithCases = addCasesToUTLAs(utlas, json, date)
 plot(utlasWithCases[,"totalCases"], main = date)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
-
 The greater London:
-
-``` r
+```{r, warning=FALSE}
 date = "2020-03-23"
 utlasWithCases = addCasesToUTLAs(utlas, json, date)
 bbx = osmdata::getbb('Greater London, U.K.') 
 bbx = c(xmin = bbx[1,1], ymin = bbx[2,1], xmax = bbx[1,2], ymax = bbx[2,2])
 london = st_crop(utlasWithCases, bbx)
-```
-
-    ## although coordinates are longitude/latitude, st_intersection assumes that they are planar
-
-``` r
 plot(london[,"totalCases"], main = paste0("London on ", date))
-```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+```
 
 And we can see a line chart of, say Leeds:
-
-``` r
+```{r leeds}
 library(ggplot2)
 leeds = utlas$ctyua19cd[utlas$ctyua19nm == "Leeds"]
 leeds = json$utlas[[leeds]]
@@ -85,5 +61,5 @@ cc$date = as.POSIXct(as.character(cc$date))
 cc$cases = as.numeric(cc$cases)
 ggplot(cc, aes(date,cases)) + geom_bar(stat="identity")
 ```
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
 
