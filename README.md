@@ -111,10 +111,8 @@ m = match(utlasWithCases$ctyua19cd, pop$Code)
 # length m = nrow(utlasWithCases) == 173
 pop$`All ages` = as.numeric(pop$`All ages`)
 # pop[pop$Name == "Leeds","All ages"]
-boxplot(pop[pop$Geography1 == "Unitary Authority", "All ages"])
+# boxplot(pop[pop$Geography1 == "Unitary Authority", "All ages"])
 ```
-
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 Now we can calculate the infection rate of (1/100K) for each of them
 
