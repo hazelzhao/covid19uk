@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: r-lib/actions/setup-pandoc@v1
     - name: main pkges
       run: sudo apt install wget curl
     - name: add mrutter repos
