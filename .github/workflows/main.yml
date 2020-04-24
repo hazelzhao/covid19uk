@@ -1,0 +1,37 @@
+on:
+  schedule:
+    - cron:  '0 8 * * *'
+  push:
+    tags:
+    - '*'
+name: RMARKDOWN
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: main pkges
+      run: sudo apt install wget curl
+    - name: add mrutter repos
+      run: |
+        sudo add-apt-repository -y "ppa:marutter/rrutter"
+        sudo add-apt-repository -y "ppa:marutter/c2d4u"
+        sudo apt update
+    - name: install R
+      run: |
+        echo Installing R
+        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+        sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+        sudo apt update
+        sudo apt install r-base r-cran-littler r-base-dev r-recommended
+        echo check installation
+        R --version
+    - name: sf and system libraries
+      run: |
+        sudo add-apt-repository ppa:ubuntugis/ppa
+        sudo apt install libudunits2-dev \
+        libproj-dev libgeos-dev libgdal-dev r-cran-sf r-cran-rmarkdown r-cran-jsonlite \
+        r-cran-magrittr r-cran-ggplot2
+        
+    - name: load SF
+      run: R -e "rmarkdown::render('README.Rmd')"

@@ -4,7 +4,8 @@ header-includes:
 - \usepackage{subfig}
 ---
 
-# covid19uk
+# covid19uk 
+![.github/workflows/main.yml](https://github.com/layik/covid19uk/workflows/.github/workflows/main.yml/badge.svg)
 
 Some basic analysis to go with the eAtlas covid19UK application.
 
