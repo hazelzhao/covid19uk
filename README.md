@@ -32,7 +32,7 @@ names(json)
 json$lastUpdatedAt
 ```
 
-    ## [1] "2020-04-20T15:59:38.910841Z"
+    ## [1] "2020-04-23T15:11:47.082664Z"
 
 Nicely, they also release geometries and we can generate maps. For
 example to get thee latest figures of the regions:
@@ -127,3 +127,9 @@ plot(utlasWithCases[,"ir"], main = paste0("Infection rate per 100k on ", Sys.Dat
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+Get countries data?
+
+``` r
+countriesWithCases = addCasesToUTLAs(countries, json, geo = "countries")
+```

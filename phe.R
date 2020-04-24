@@ -20,11 +20,11 @@ json = readLines(tmp) %>% fromJSON()
 
 json$lastUpdatedAt
 # json$utlas[[1]]$name$value
-addCasesToUTLAs <- function(utlas, json, d = NA) {
-  tmp = utlas
+addCasesToUTLAs <- function(what, json, d = NA, geo = "utlas") {
+  tmp = what
   tmp$totalCases = NA
-  for (x in utlas$ctyua19nm) {
-    for (y in json$utlas) {
+  for (x in tmp$ctyua19nm) {
+    for (y in json[["utlas"]]) {
       if(y$name$value == x) {
         if(!is.na(d)) {
           for (v in y$dailyTotalConfirmedCases$date) {
@@ -44,3 +44,5 @@ addCasesToUTLAs <- function(utlas, json, d = NA) {
   }
   tmp
 }
+
+countries = st_read(paste0(dataURL, geojson[1]))

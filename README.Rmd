@@ -99,4 +99,10 @@ utlasWithCases$ir = utlasWithCases$totalCases/(utlasWithCases$population/1e5)
 plot(utlasWithCases[,"ir"], main = paste0("Infection rate per 100k on ", Sys.Date()))
 ```
 
+Get countries data?
+```{r}
+countriesWithCases = addCasesToUTLAs(countries, json, geo = "countries")
+```
+
+
 
