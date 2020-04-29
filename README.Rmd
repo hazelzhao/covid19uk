@@ -66,10 +66,12 @@ cityWithDaily = function(name = "Leeds", total = FALSE) {
   names(cc) = c("date", "cases")
   cc$date = as.POSIXct(as.character(cc$date))
   cc$cases = as.numeric(as.character(cc$cases))
+  cc$name = name
   cc
 }
 # cityWithDaily() %>% ggplot(aes(date,cases)) + geom_bar(stat="identity")
-cityWithDaily(total = T) %>% ggplot(aes(date,cases)) + geom_line()
+cityWithDaily(total = T) %>% ggplot(aes(date,cases)) + geom_line() + ggtitle("Leeds total cases")
+
 cityWithDaily() %>% ggplot(aes(date,cases)) + geom_line()
 
 ```
