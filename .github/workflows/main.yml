@@ -1,15 +1,11 @@
-on:
-  schedule:
-    - cron:  '0 8 * * *'
-  push:
-    tags:
-    - '*'
+on: [push]
 name: RMARKDOWN
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - uses: r-lib/actions/setup-pandoc@v1
     - name: main pkges
       run: sudo apt install wget curl
     - name: add mrutter repos
@@ -30,8 +26,7 @@ jobs:
       run: |
         sudo add-apt-repository ppa:ubuntugis/ppa
         sudo apt install libudunits2-dev \
-        libproj-dev libgeos-dev libgdal-dev r-cran-sf r-cran-rmarkdown r-cran-jsonlite \
-        r-cran-magrittr r-cran-ggplot2
-        
-    - name: load SF
+        libproj-dev libgeos-dev libgdal-dev 
+        sudo R -e "install.packages(c('sf', 'rmarkdown', 'jsonlite', 'magrittr', 'ggplot2'))"
+    - name: render
       run: R -e "rmarkdown::render('README.Rmd')"
