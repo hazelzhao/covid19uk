@@ -18,7 +18,7 @@ jobs:
         # check brew first
         # brew install pkg-config brew install gdal
       - name: Install rmarkdown
-        run: Rscript -e "install.packages(c('sf', 'rmarkdown', 'jsonlite', 'magrittr', 'ggplot2'))"
+        run: Rscript -e "install.packages(c('sf', 'rmarkdown', 'jsonlite', 'magrittr', 'ggplot2', 'xml2', 'osmdata', 'readxl'))"
       - name: Render README
         run: Rscript -e 'rmarkdown::render("README.Rmd")'
       - name: Commit results
