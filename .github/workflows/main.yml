@@ -1,32 +1,24 @@
-on: [push]
-name: RMARKDOWN
+# from https://github.com/r-lib/actions/tree/master/examples
+on:
+  push:
+    paths:
+      - README.Rmd
+
+name: Render README
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  render:
+    name: Render README
+    runs-on: macOS-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: r-lib/actions/setup-pandoc@v1
-    - name: main pkges
-      run: sudo apt install wget curl
-    - name: add mrutter repos
-      run: |
-        sudo add-apt-repository -y "ppa:marutter/rrutter"
-        sudo add-apt-repository -y "ppa:marutter/c2d4u"
-        sudo apt update
-    - name: install R
-      run: |
-        echo Installing R
-        sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-        sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
-        sudo apt update
-        sudo apt install r-base r-cran-littler r-base-dev r-recommended
-        echo check installation
-        R --version
-    - name: sf and system libraries
-      run: |
-        sudo add-apt-repository ppa:ubuntugis/ppa
-        sudo apt install libudunits2-dev \
-        libproj-dev libgeos-dev libgdal-dev 
-        sudo R -e "install.packages(c('sf', 'rmarkdown', 'jsonlite', 'magrittr', 'ggplot2'))"
-    - name: render
-      run: R -e "rmarkdown::render('README.Rmd')"
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@v1
+      - name: Install rmarkdown
+        run: Rscript -e 'install.packages("rmarkdown")'
+      - name: Render README
+        run: Rscript -e 'rmarkdown::render("README.Rmd")'
+      - name: Commit results
+        run: |
+          git commit examples/README.md -m 'Re-build README.Rmd' || echo "No changes to commit"
+          git push origin || echo "No changes to commit"
