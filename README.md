@@ -151,3 +151,17 @@ generated from the code and shows the top hotpspots in the UK on 29th
 April 2020 and corresponding Google mobility data. Also, the not so hot
 spots with the same corresponding traffic flow drop rates.
 ![](https://pbs.twimg.com/media/EWyBxLYWkAE5MBO?format=jpg&name=medium)
+
+## Apple Mobility
+
+Quick look at the Apple Mobility data here on 30th April 2020, the
+granularity is an issue and is only useful for a national level
+analytics.
+
+``` r
+# download https://www.apple.com/covid19/mobility
+am = read.csv("applemobilitytrends-2020-04-28.csv")
+length(am[am$region =="England",])
+#> 1
+# dates start from 2020.01.13 to ...
+```
