@@ -3,6 +3,8 @@
 
 # covid19uk
 
+![.github/workflows/main.yml](https://github.com/layik/covid19uk/workflows/.github/workflows/main.yml/badge.svg)
+
 Some basic analysis to go with the eAtlas covid19UK application.
 
 Currently the date released by PHE in their dashboard can be found under
@@ -25,14 +27,14 @@ names(json)
 ```
 
     ## [1] "lastUpdatedAt" "disclaimer"    "overview"      "countries"    
-    ## [5] "regions"       "utlas"
+    ## [5] "regions"       "utlas"         "ltlas"
 
 ``` r
 # so last released data is
 json$lastUpdatedAt
 ```
 
-    ## [1] "2020-04-23T15:11:47.082664Z"
+    ## [1] "2020-04-29T21:32:34.352917Z"
 
 Nicely, they also release geometries and we can generate maps. For
 example to get thee latest figures of the regions:
@@ -89,10 +91,12 @@ cityWithDaily = function(name = "Leeds", total = FALSE) {
   names(cc) = c("date", "cases")
   cc$date = as.POSIXct(as.character(cc$date))
   cc$cases = as.numeric(as.character(cc$cases))
+  cc$name = name
   cc
 }
 # cityWithDaily() %>% ggplot(aes(date,cases)) + geom_bar(stat="identity")
-cityWithDaily(total = T) %>% ggplot(aes(date,cases)) + geom_line()
+cityWithDaily(total = T) %>% ggplot(aes(date,cases)) + geom_line() + ggtitle("Leeds total cases")
+
 cityWithDaily() %>% ggplot(aes(date,cases)) + geom_line()
 ```
 
@@ -133,3 +137,17 @@ Get countries data?
 ``` r
 countriesWithCases = addCasesToUTLAs(countries, json, geo = "countries")
 ```
+
+## Google Mobility
+
+We could look at the Google mobility data released
+[here](https://www.google.com/covid19/mobility/). Upon a an initial
+look, I could not see any obvious correlation between total case numbers
+in a local authority and amount of drop in mobility. That is to see if
+areas with less compliance with lockdown leading to more cases.
+
+The code can be found here in the repo. The following image was
+generated from the code and shows the top hotpspots in the UK on 29th
+April 2020 and corresponding Google mobility data. Also, the not so hot
+spots with the same corresponding traffic flow drop rates.
+![](https://pbs.twimg.com/media/EWyBxLYWkAE5MBO?format=jpg&name=medium)
